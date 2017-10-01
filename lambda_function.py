@@ -1,12 +1,3 @@
-"""
-This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
-The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well
-as testing instructions are located at http://amzn.to/1LzFrj6
-
-For additional samples, visit the Alexa Skills Kit Getting Started guide at
-http://amzn.to/1LGWsLG
-"""
-
 from __future__ import print_function
 
 
@@ -70,16 +61,16 @@ def handle_session_end_request():
 
 def get_tool_locations():
     tools = {
-        "Hammer": "Front right quadrant.",
-        "Drill": "Front right quadrant.",
-        "Nails": "Front right quadrant.",
-        "Wire": "Back right quadrant.",
-        "Scissors": "Back right quadrant.",
-        "Laser Cutter": "Front left quadrant.",
-        "3D Printer": "Back left quadrant.",
-        "Saw": "Front right quadrant.",
-        "Duct Tape": "Back right quadrant.",
-        "Tape": "Back right quadrant."
+        "hammer": "front right quadrant.",
+        "drill": "front right quadrant.",
+        "nails": "front right quadrant.",
+        "wire": "back right quadrant.",
+        "scissors": "back right quadrant.",
+        "laser cutter": "front left quadrant.",
+        "3d printer": "back left quadrant.",
+        "saw": "front right quadrant.",
+        "duct tape": "back right quadrant.",
+        "tape": "back right quadrant."
     }
     
     return tools
@@ -95,10 +86,9 @@ def find_tool_in_session(intent, session):
     should_end_session = False
 
     if 'Tool' in intent['slots']:
-        tool_to_find = intent['slots']['Toolse']['value']
+        tool_to_find = intent['slots']['Tool']['value']
         full_tool_locations = get_tool_locations()
         tool_location = full_tool_locations[tool_to_find]
-        session_attributes = None
         speech_output = "The %s is located in the %s." % (tool_to_find, tool_location)
         reprompt_text = "Ask me where another tool is."
     else:
