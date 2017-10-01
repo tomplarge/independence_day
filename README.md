@@ -1,2 +1,2 @@
 # independence_day
-some ~groundbreaking~ shit
+some groundbreaking shit
