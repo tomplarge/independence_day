@@ -1,3 +1,5 @@
+from __future__ import print_function
+import requests
 from flask import Flask, request
 from flask_restful import Resource, Api
 import os, sys, logging
@@ -20,9 +22,6 @@ flask_api.add_resource(Navigator, navigator_endpoint)
 if __name__ == '__main__':
     # run on open host on port 5000
     flask_app.run(host = "0.0.0.0", port = 5000)
-
-from __future__ import print_function
-import requests
 
 # --------------- Helpers that build all of the responses ----------------------
 
