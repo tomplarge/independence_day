@@ -80,14 +80,6 @@ def find_tool_in_session(intent, session):
     """ Finds the tool in the session and prepares the speech to reply to the
     user.
     """
-    ###### Testing flask #####
-    flask_response = requests.get('http://10.0.0.107:5000/navigator')
-    if flask_response.status_code == 200:
-        speech_output = "Success"
-    else:
-        speech_output = "Failed"
-    #########################
-
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
@@ -96,10 +88,10 @@ def find_tool_in_session(intent, session):
         tool_to_find = intent['slots']['Tool']['value']
         full_tool_locations = get_tool_locations()
         tool_location = full_tool_locations[tool_to_find]
-        # speech_output = "The %s is located in the %s." % (tool_to_find, tool_location)
+        speech_output = "The %s is located in the %s." % (tool_to_find, tool_location)
         reprompt_text = "Ask me where another tool is."
     else:
-        # speech_output = "I'm not sure I know where that tool is. Try again."
+        speech_output = "I'm not sure I know where that tool is. Try again."
         reprompt_text = "Ask me where a tool is and I will try to locate it for you."
 
     return build_response(session_attributes, build_speechlet_response(
