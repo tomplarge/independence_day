@@ -10,9 +10,9 @@ flask_api = Api(flask_app)
 
 class Navigator(Resource):
     def post(self):
-        print(request.data)
-        return "success"
-
+        response = main_handler(request.data)
+        return response
+    
 # define endpoint
 navigator_endpoint = "/navigator"
 
@@ -172,7 +172,7 @@ def on_session_ended(session_ended_request, session):
 
 # --------------- Main handler ------------------
 
-def lambda_handler(event, context):
+def main_handler(event, context):
     """ Route the incoming request based on type (LaunchRequest, IntentRequest,
     etc.) The JSON body of the request is provided in the event parameter.
     """
