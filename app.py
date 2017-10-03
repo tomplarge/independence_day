@@ -10,7 +10,7 @@ flask_api = Api(flask_app)
 
 class Navigator(Resource):
     def get(self):
-        print request.json
+        print(request.data)
         return "success"
 
 # define endpoint
