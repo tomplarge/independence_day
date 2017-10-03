@@ -3,6 +3,11 @@ import requests
 from flask import Flask, request
 from flask_restful import Resource, Api
 import os, sys, logging
+import RPi.GPIO as GPIO
+import time
+# --------------- Initialize GPIO Pins -----------------
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 # --------------- Helpers that build all of the responses ----------------------
 
@@ -188,6 +193,9 @@ flask_api = Api(flask_app)
 
 class Navigator(Resource):
     def post(self):
+        # turn on LED when request is made
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.output(18, GPIO.HIGH)
         response = main_handler(request.data)
         return response
 
