@@ -4,25 +4,6 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 import os, sys, logging
 
-# initialize flask app
-flask_app = Flask(__name__)
-flask_api = Api(flask_app)
-
-class Navigator(Resource):
-    def post(self):
-        response = main_handler(request.data)
-        return response
-    
-# define endpoint
-navigator_endpoint = "/navigator"
-
-# add endpoint to flask
-flask_api.add_resource(Navigator, navigator_endpoint)
-
-if __name__ == '__main__':
-    # run on open host on port 5000
-    flask_app.run(host = "0.0.0.0", port = 5000)
-
 # --------------- Helpers that build all of the responses ----------------------
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
@@ -198,3 +179,24 @@ def main_handler(event, context):
         return on_intent(event['request'], event['session'])
     elif event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
+
+# -------- Flask Setup and Run ---------
+
+# initialize flask app
+flask_app = Flask(__name__)
+flask_api = Api(flask_app)
+
+class Navigator(Resource):
+    def post(self):
+        response = main_handler(request.data)
+        return response
+
+# define endpoint
+navigator_endpoint = "/navigator"
+
+# add endpoint to flask
+flask_api.add_resource(Navigator, navigator_endpoint)
+
+if __name__ == '__main__':
+    # run on open host on port 5000
+    flask_app.run(host = "0.0.0.0", port = 5000)
