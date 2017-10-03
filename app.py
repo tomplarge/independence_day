@@ -196,7 +196,7 @@ class Navigator(Resource):
         # turn on LED when request is made
         GPIO.setup(18, GPIO.OUT)
         GPIO.output(18, GPIO.HIGH)
-        response = main_handler(request.data)
+        response = main_handler(request.data, {})
         return response
 
 # define endpoint
