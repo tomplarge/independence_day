@@ -9,7 +9,7 @@ flask_app = Flask(__name__)
 flask_api = Api(flask_app)
 
 class Navigator(Resource):
-    def get(self):
+    def post(self):
         print(request.data)
         return "success"
 
