@@ -1,14 +1,14 @@
+"""
+This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
+The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well
+as testing instructions are located at http://amzn.to/1LzFrj6
+
+For additional samples, visit the Alexa Skills Kit Getting Started guide at
+http://amzn.to/1LGWsLG
+"""
+
 from __future__ import print_function
-import requests
-from flask import Flask, request
-from flask_restful import Resource, Api
-import os, sys, logging
-# import RPi.GPIO as GPIO
-import time
-# from sample import *
-# --------------- Initialize GPIO Pins -----------------
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
+
 
 # --------------- Helpers that build all of the responses ----------------------
 
@@ -47,85 +47,83 @@ def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
     add those here
     """
+
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Welcome to the Makerspace Navigator. Ask where a tool is, or how to use a tool, and I can help you."
+    speech_output = "Welcome to the Alexa Skills Kit sample. " \
+                    "Please tell me your favorite color by saying, " \
+                    "my favorite color is red"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Ask me where a tool is, and I can help you find it."
+    reprompt_text = "Please tell me your favorite color by saying, " \
+                    "my favorite color is red."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
 
 def handle_session_end_request():
-    session_attributes = {}
     card_title = "Session Ended"
-    speech_output = "I hope you found what you needed! Make away!"
+    speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
+                    "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
-    return build_response(session_attributes, build_speechlet_response(
+    return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
 
-def get_tool_locations():
-    tools = {
-        "hammer": "front right quadrant.",
-        "drill": "front right quadrant.",
-        "nails": "front right quadrant.",
-        "wire": "back right quadrant.",
-        "scissors": "back right quadrant.",
-        "laser cutter": "front left quadrant.",
-        "3d printer": "back left quadrant.",
-        "saw": "front right quadrant.",
-        "duct tape": "back right quadrant.",
-        "tape": "back right quadrant."
-    }
-
-    return tools
+def create_favorite_color_attributes(favorite_color):
+    return {"favoriteColor": favorite_color}
 
 
-def find_tool_in_session(intent, session):
-    """ Finds the tool in the session and prepares the speech to reply to the
+def set_color_in_session(intent, session):
+    """ Sets the color in the session and prepares the speech to reply to the
     user.
     """
+
     card_title = intent['name']
     session_attributes = {}
-    reprompt_text = None
+    should_end_session = False
 
-    if 'Tool' in intent['slots']:
-        tool_to_find = intent['slots']['Tool']['value']
-        #full_tool_locations = get_tool_locations()
-        #tool_location = full_tool_locations[tool_to_find]
-        tool_location = "Front"
-        speech_output = "The " + tool_to_find + " is located in the " + tool_location + ". Happy making."
-        should_end_session = True
+    if 'Color' in intent['slots']:
+        favorite_color = intent['slots']['Color']['value']
+        session_attributes = create_favorite_color_attributes(favorite_color)
+        speech_output = "I now know your favorite color is " + \
+                        favorite_color + \
+                        ". You can ask me your favorite color by saying, " \
+                        "what's my favorite color?"
+        reprompt_text = "You can ask me your favorite color by saying, " \
+                        "what's my favorite color?"
     else:
-        speech_output = "I didn't catch that. Try again."
-        should_end_session = False
-
+        speech_output = "I'm not sure what your favorite color is. " \
+                        "Please try again."
+        reprompt_text = "I'm not sure what your favorite color is. " \
+                        "You can tell me your favorite color by saying, " \
+                        "my favorite color is red."
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-def get_tool_info_in_session(intent, session):
-    """ Gets tool info in session and prepares speech to reply to user """
-    card_title = intent['name']
+
+def get_color_from_session(intent, session):
     session_attributes = {}
     reprompt_text = None
 
-    if 'Tool' in intent['slots']:
-        tool_for_info = intent['slots']['Tool']['value']
-        #full_tool_locations = get_tool_locations()
-        #tool_location = full_tool_locations[tool_to_find]
-        tool_location = "Front"
-        speech_output = "The " + tool_for_info + " can be used with your brain, you fuh king idiot. Happy making."
+    if session.get('attributes', {}) and "favoriteColor" in session.get('attributes', {}):
+        favorite_color = session['attributes']['favoriteColor']
+        speech_output = "Your favorite color is " + favorite_color + \
+                        ". Goodbye."
         should_end_session = True
     else:
-        speech_output = "I didn't catch that. Try again."
+        speech_output = "I'm not sure what your favorite color is. " \
+                        "You can say, my favorite color is red."
         should_end_session = False
 
+    # Setting reprompt_text to None signifies that we do not want to reprompt
+    # the user. If the user does not respond or says something that is not
+    # understood, the session will end.
     return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
+        intent['name'], speech_output, reprompt_text, should_end_session))
+
 
 # --------------- Events ------------------
 
@@ -157,10 +155,10 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "FindTool":
-        return find_tool_in_session(intent, session)
-    elif intent_name == "ToolInfo":
-        return get_tool_info_in_session(intent, session)
+    if intent_name == "MyColorIsIntent":
+        return set_color_in_session(intent, session)
+    elif intent_name == "WhatsMyColorIntent":
+        return get_color_from_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -182,8 +180,7 @@ def on_session_ended(session_ended_request, session):
 # --------------- Main handler ------------------
 
 def main_handler(event, context):
-    """
-    Route the incoming request based on type (LaunchRequest, IntentRequest,
+    """ Route the incoming request based on type (LaunchRequest, IntentRequest,
     etc.) The JSON body of the request is provided in the event parameter.
     """
     print("event.session.application.applicationId=" +
@@ -208,25 +205,3 @@ def main_handler(event, context):
         return on_intent(event['request'], event['session'])
     elif event['request']['type'] == "SessionEndedRequest":
         return on_session_ended(event['request'], event['session'])
-
-# -------- Flask Setup and Run ---------
-
-# initialize flask app
-flask_app = Flask(__name__)
-flask_api = Api(flask_app)
-
-class Navigator(Resource):
-    def post(self):
-        print (request.get_json())
-        response = main_handler(request.get_json(), {})
-        return response
-
-# define endpoint
-navigator_endpoint = "/navigator"
-
-# add endpoint to flask
-flask_api.add_resource(Navigator, navigator_endpoint)
-
-if __name__ == '__main__':
-    # run on open host on port 5000
-    flask_app.run(host = "0.0.0.0", port = 5000)
