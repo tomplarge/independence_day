@@ -1,6 +1,6 @@
 authtoken: AkcPJzk2L9PVgVMsR7my_ZheT5thMjb8ia2aftKqN
 tunnels:
-  alexaskill:
+  makerspace:
     addr: 5000
     proto: http
     hostname: makerspace.ngrok.io
@@ -12,4 +12,3 @@ tunnels:
     addr: 5000
     proto: http
     hostname: lasercutter.ngrok.io
-
