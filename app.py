@@ -72,21 +72,27 @@ def handle_session_end_request():
 
 def get_tool_location(tool_name):
     tools = {
-        "hammer": "Front",
-        "drill": "front right quadrant.",
-        "nails": "front right quadrant.",
-        "wire": "back right quadrant.",
-        "scissors": "back right quadrant.",
         "laser cutter": "front left quadrant.",
+        "Lisa cutter": "front left quadrant.",
+        "laser color": "front left quadrant.",
+        "lisa cutter": "front left quadrant.",
         "3d printer": "back left quadrant.",
-        "saw": "front right quadrant.",
-        "duct tape": "back right quadrant.",
-        "tape": "back right quadrant."
+        "3dprinter": "back left quadrant.",
+        "3 d printer": "back left quadrant.",
+        "3 printer": "back left quadrant.",
+        "3D printer": "back left quadrant."
     }
 
     endpoints = {
+        "3D printer": "https://3dprinter.ngrok.io/LED",
         "3d printer": "https://3dprinter.ngrok.io/LED",
-        "laser cutter": "https://lasercutter.ngrok.io/LED"
+        "3dprinter": "https//3dprinter.ngrok.io/LED",
+        "3 d printer": "https://3dprinter.ngrok.io/LED",
+        "3 printer": "https://3dprinter.ngrok.io/LED",
+        "laser cutter": "https://lasercutter.ngrok.io/LED",
+        "Lisa cutter": "https://lasercutter.ngrok.io/LED",
+        "lisa cutter": "https://lasercutter.ngrok.io/LED",
+        "laser color": "https://lasercutter.ngrok.io/LED"
     }
     try:
         endpoint = endpoints[tool_name]
@@ -110,6 +116,7 @@ def find_tool_in_session(intent, session):
 
     if 'Tool' in intent['slots']:
         tool_to_find = intent['slots']['Tool']['value']
+        print(tool_to_find + "\n")
         tool_location, tool_endpoint = get_tool_location(tool_to_find)
         if tool_location is not None and tool_endpoint is not None:
             speech_output = "The " + tool_to_find + " is located in the " + tool_location + ". Happy making."
@@ -119,17 +126,21 @@ def find_tool_in_session(intent, session):
     else:
         speech_output = "I didn't catch that. Try again."
         should_end_session = False
-
-    pid = os.fork()
-    if pid == 0:
-        # child sends request to correct pi to light up
-        #subprocess.call(['python','pixels.py'])
-        r = requests.get('https://72019310.ngrok.io/LED')
-        os._exit(1)
+    
+    if tool_endpoint is not None:
+        pid = os.fork()
+        if pid == 0:
+            # child sends request to correct pi to light up
+            #subprocess.call(['python','pixels.py'])
+            r = requests.get(tool_endpoint)
+            os._exit(1)
+        else:
+            # parent returns to response to flask
+            return build_response(session_attributes, build_speechlet_response(
+                card_title, speech_output, reprompt_text, should_end_session))
     else:
-        # parent returns to response to flask
-        return build_response(session_attributes, build_speechlet_response(
-            card_title, speech_output, reprompt_text, should_end_session))
+            return build_response(session_attributes, build_speechlet_response(
+                card_title, speech_output, reprompt_text, should_end_session))
 
 def get_tool_info_in_session(intent, session):
     """ Gets tool info in session and prepares speech to reply to user """
