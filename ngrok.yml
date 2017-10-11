@@ -1,0 +1,15 @@
+authtoken: AkcPJzk2L9PVgVMsR7my_ZheT5thMjb8ia2aftKqN
+tunnels:
+  alexaskill:
+    addr: 5000
+    proto: http
+    hostname: makerspace.ngrok.io
+  3dprinter:
+    addr: 5000
+    proto: http
+    hostname: 3dprinter.ngrok.io
+  lasercutter:
+    addr: 5000
+    proto: http
+    hostname: lasercutter.ngrok.io
+
