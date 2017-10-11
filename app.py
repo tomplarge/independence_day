@@ -4,7 +4,7 @@ import numpy as np
 from flask import Flask, request
 from flask_restful import Resource, Api
 import os, sys, logging
-#from pixels import pixels
+from pixels import pixels
 # import RPi.GPIO as GPIO
 import time
 # from sample import *
