@@ -205,7 +205,7 @@ def get_tool_info_in_session(intent, session):
 
     if 'Tool' in intent['slots'] and 'value' in intent['slots']['Tool']:
         spoken_tool = intent['slots']['Tool']['value']
-        tool = determine_tool(spoken)
+        tool = determine_tool(spoken_tool)
         speech_output = tool["info"]
         should_end_session = True
     else:
