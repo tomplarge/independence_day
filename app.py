@@ -83,9 +83,10 @@ def get_tool_location(tool_name):
         "duct tape": "back right quadrant.",
         "tape": "back right quadrant."
     }
-    
+
     endpoints = {
-        "hammer": "https://72019310.ngrok.io/LED"
+        "3d printer": "https://3dprinter.ngrok.io/LED",
+        "laser cutter": "https://lasercutter.ngrok.io/LED"
     }
     try:
         endpoint = endpoints[tool_name]
@@ -95,7 +96,7 @@ def get_tool_location(tool_name):
         tool_location = tools[tool_name]
     except:
         tool_location = None
-    
+
     return tool_location, endpoint
 
 
